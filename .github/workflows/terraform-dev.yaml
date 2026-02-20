@@ -1,0 +1,88 @@
+
+name: Terraform - Dev
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  plan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents:      read
+      id-token:      write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.8.2"
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::333813598365:role/hackathon-user-7"
+          aws-region: "ap-south-1"
+          role-duration-seconds: 3600
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        continue-on-error: false
+
+      - name: Terraform Init
+        run: terraform init -input=false -upgrade
+        working-directory: env/dev
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: env/dev
+
+      - name: Terraform Plan
+        run: terraform plan -input=false -out .tfplan
+        working-directory: env/dev
+
+  apply:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents:      read
+      id-token:      write
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.8.2"
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::333813598365:role/hackathon-user-7"
+          aws-region: "ap-south-1"
+          role-duration-seconds: 3600
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        continue-on-error: false
+
+      - name: Terraform Init
+        run: terraform init -input=false -upgrade
+        working-directory: env/dev
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: env/dev
+
+      - name: Terraform Plan
+        run: terraform plan -input=false -out .tfplan
+        working-directory: env/dev
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false .tfplan
+        working-directory: env/dev
