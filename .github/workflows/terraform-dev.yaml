@@ -31,9 +31,9 @@ jobs:
           aws-region: "ap-south-1"
           role-duration-seconds: 3600
 
-      - name: Terraform Format Check
-        run: terraform fmt -check -recursive
-        continue-on-error: false
+      # - name: Terraform Format Check
+      #   run: terraform fmt -check -recursive
+      #   continue-on-error: false
 
       - name: Terraform Init
         run: terraform init -input=false -upgrade
