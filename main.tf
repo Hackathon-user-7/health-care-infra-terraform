@@ -34,6 +34,16 @@ module "alb" {
   tags = var.tags
 }
 
+
+module "ecr" {
+  source = "./modules/ecr"
+  
+  repository_name = "hackathon-repository"
+  
+  tags = var.tags
+}
+
+
 module "ecs" {
   source = "./modules/ecs"
   
