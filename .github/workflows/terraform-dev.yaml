@@ -38,15 +38,15 @@ jobs:
 
       - name: Terraform Init
         run: terraform init -input=false -upgrade
-        working-directory: env/dev
+        working-directory: environments/dev
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: env/dev
+        working-directory: environments/dev
 
       - name: Terraform Plan
         run: terraform plan -input=false -out .tfplan
-        working-directory: env/dev
+        working-directory: environments/dev
 
   apply:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
