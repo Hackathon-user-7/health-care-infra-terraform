@@ -1,0 +1,39 @@
+
+name: pull-request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents:      read
+      id-token:      write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.8.2"
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::333813598365:role/hackathon-user-7"
+          aws-region: "ap-south-1"
+          role-duration-seconds: 3600
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        continue-on-error: false
+
+      - run: terraform init -input=false -upgrade
+        working-directory: env/dev
+
+      - run: terraform plan -input=false -out .tfplan
+        working-directory: env/dev
+          
+          
