@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - main
+      - feature-331
   push:
     branches:
       - main
