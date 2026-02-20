@@ -1,7 +1,7 @@
 variable "repository_name" {
   description = "Name of the ECR repository"
   type        = string
-  default     = hackathon-user7
+  default     = "hackathon-user7"
 }
 
 variable "image_tag_mutability" {
